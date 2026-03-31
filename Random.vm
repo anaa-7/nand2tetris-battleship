@@ -1,0 +1,44 @@
+function Random.setSeed 0
+push argument 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 1
+pop argument 0
+label IF_FALSE0
+push argument 0
+pop static 0
+push constant 0
+return
+function Random.rand 0
+push static 0
+push constant 25173
+call Math.multiply 2
+push constant 13849
+add
+pop static 0
+push static 0
+push constant 0
+lt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push static 0
+neg
+pop static 0
+label IF_FALSE0
+push static 0
+return
+function Random.randRange 1
+call Random.rand 0
+pop local 0
+push local 0
+push local 0
+push argument 0
+call Math.divide 2
+push argument 0
+call Math.multiply 2
+sub
+return

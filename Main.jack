@@ -1,0 +1,20 @@
+class Main {
+    function void main() {
+        var BattleshipGame game;
+        var int seed;
+        var char key;
+
+        do Output.printString("Pritisni tipku za START...");
+        let seed = 0;
+        while (key = 0) {
+            let seed = seed + 1;
+            let key = Keyboard.keyPressed();
+        }
+        
+        do Random.setSeed(seed);
+        let game = BattleshipGame.new();
+        do game.play();
+        do game.dispose();
+        return;
+    }
+}

@@ -1,0 +1,21 @@
+class Random {
+    static int seed;
+
+    function void setSeed(int newSeed) {
+        if (newSeed = 0) { let newSeed = 1; }
+        let seed = newSeed;
+        return;
+    }
+
+    function int rand() {
+        let seed = (seed * 25173) + 13849;
+        if (seed < 0) { let seed = -seed; }
+        return seed;
+    }
+
+    function int randRange(int range) {
+        var int r;
+        let r = Random.rand();
+        return (r - ((r / range) * range));
+    }
+}

@@ -1,0 +1,161 @@
+class BattleshipGame {
+    field Array grid;
+    field int shipsLeft;
+    field int shotsLeft;
+
+    constructor BattleshipGame new() {
+        let grid = Array.new(100);
+        let shipsLeft = 17;
+        let shotsLeft = 50;
+        do clearGrid();
+        do placeShip(5);
+        do placeShip(4);
+        do placeShip(3);
+        do placeShip(3);
+        do placeShip(2);
+        return this;
+    }
+
+    method void clearGrid() {
+        var int i;
+        let i = 0;
+        while (i < 100) {
+            let grid[i] = 0;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void placeShip(int len) {
+        var int x, y, horiz, i, valid;
+        let valid = 0;
+        while (valid = 0) {
+            let x = Random.randRange(10);
+            let y = Random.randRange(10);
+            let horiz = Random.randRange(2);
+            if (checkFit(x, y, len, horiz)) {
+                let i = 0;
+                while (i < len) {
+                    if (horiz = 1) { let grid[(y * 10) + (x + i)] = 1; }
+                    else { let grid[((y + i) * 10) + x] = 1; }
+                    let i = i + 1;
+                }
+                let valid = 1;
+            }
+        }
+        return;
+    }
+
+    method boolean checkFit(int x, int y, int len, int horiz) {
+        var int i;
+        if (horiz = 1) {
+            if ((x + len) > 10) { return false; }
+            let i = 0;
+            while (i < len) {
+                if (grid[(y * 10) + (x + i)] = 1) { return false; }
+                let i = i + 1;
+            }
+        } else {
+            if ((y + len) > 10) { return false; }
+            let i = 0;
+            while (i < len) {
+                if (grid[((y + i) * 10) + x] = 1) { return false; }
+                let i = i + 1;
+            }
+        }
+        return true;
+    }
+
+    method void drawBoard() {
+        var int i, x, y, val;
+        do Screen.clearScreen();
+        
+        let i = 0;
+        while (i < 10) {
+            do Output.moveCursor(0, (i * 3) + 5); 
+            do Output.printInt(i);
+            let i = i + 1;
+        }
+        
+        let i = 0;
+        while (i < 100) {
+            let x = i - ((i / 10) * 10);
+            let y = i / 10;
+            if (x = 0) {
+                do Output.moveCursor((y * 2) + 2, 1);
+                do Output.printChar(65 + y);
+            }
+            do Screen.setColor(true);
+            do Screen.drawRectangle((x*24)+35, (y*22)+20, (x*24)+55, (y*22)+40);
+            do Screen.setColor(false);
+            do Screen.drawRectangle((x*24)+36, (y*22)+21, (x*24)+54, (y*22)+39);
+            let val = grid[i];
+            if (val = 3) {
+                do Screen.setColor(true);
+                do Screen.drawRectangle((x*24)+38, (y*22)+23, (x*24)+52, (y*22)+37);
+            }
+            if (val = 2) {
+                do Screen.setColor(true);
+                do Screen.drawCircle((x*24)+45, (y*22)+30, 4);
+            }
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void play() {
+        var int row, col, cell;
+        var String input;
+        
+        while ((shipsLeft > 0) & (shotsLeft > 0)) {
+            do drawBoard();
+            
+            do Output.moveCursor(2, 38);
+            do Output.printString("SHOTS: ");
+            do Output.printInt(shotsLeft);
+            do Output.moveCursor(4, 38);
+            do Output.printString("SHIPS: ");
+            do Output.printInt(shipsLeft);
+            
+        
+            do Output.moveCursor(10, 38);
+            do Output.printString("INPUT:");
+            
+            do Output.moveCursor(12, 38);
+            let input = Keyboard.readLine("Red (A-J): ");
+            if (input.length() > 0) {
+                let row = input.charAt(0) - 65;
+                if (row > 20) { let row = row - 32; } 
+            }
+            
+            do Output.moveCursor(14, 38);
+            let col = Keyboard.readInt("Stupac (0-9): ");
+            
+            if ((row > -1) & (row < 10) & (col > -1) & (col < 10)) {
+                let cell = (row * 10) + col;
+                if (grid[cell] < 2) {
+                    if (grid[cell] = 1) {
+                        let grid[cell] = 3;
+                        let shipsLeft = shipsLeft - 1;
+                    } else {
+                        let grid[cell] = 2;
+                    }
+                    let shotsLeft = shotsLeft - 1;
+                }
+            }
+            do input.dispose();
+        }
+        
+        do Screen.clearScreen();
+        do Output.moveCursor(10, 25);
+        if (shipsLeft = 0) { do Output.printString("POBJEDA!"); }
+        else { do Output.printString("GAME OVER!"); }
+        return;
+    }
+
+    method void dispose() {
+        do grid.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}
